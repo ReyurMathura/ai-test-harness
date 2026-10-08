@@ -1,7 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { spawnSync } from 'child_process';
+import spawn from 'cross-spawn';
 
 export async function generateStructuredOutput({
   prompt,
@@ -20,79 +20,91 @@ export async function generateStructuredOutput({
   const outputPath =
     path.join(tempDir, 'output.json');
 
-  fs.writeFileSync(
-    schemaPath,
-    JSON.stringify(schema, null, 2)
-  );
+  try {
+    fs.writeFileSync(
+      schemaPath,
+      JSON.stringify(schema, null, 2)
+    );
 
-  const model =
-    process.env.CODEX_MODEL ?? 'gpt-5.6-luna';
+    const model =
+      process.env.CODEX_MODEL ?? 'gpt-5.6-luna';
 
-  const reasoningEffort =
-    process.env.CODEX_REASONING_EFFORT ?? 'low';
+    const reasoningEffort =
+      process.env.CODEX_REASONING_EFFORT ?? 'low';
 
-  const args = [
-  '--ask-for-approval',
-  approvalPolicy,
+    const args = [
+      '--ask-for-approval',
+      approvalPolicy,
 
-  'exec',
+      'exec',
 
-  '--model',
-  model,
+      '--model',
+      model,
 
-  '--sandbox',
-  sandbox,
+      '--sandbox',
+      sandbox,
 
-  '--config',
-  `model_reasoning_effort=${reasoningEffort}`
-];
+      '--config',
+      `model_reasoning_effort=${reasoningEffort}`
+    ];
 
-if (autoReview) {
-  args.push(
-    '--config',
-    'approvals_reviewer=auto_review'
-  );
-}
-
-args.push(
-  '--output-schema',
-  schemaPath,
-
-  '--output-last-message',
-  outputPath,
-
-  '-'
-);
-
-  const result = spawnSync(
-    'codex',
-    args,
-    {
-      input: prompt,
-      encoding: 'utf-8',
-      stdio: [
-        'pipe',
-        'inherit',
-        'inherit'
-      ],
-      shell: process.platform === 'win32'
+    if (autoReview) {
+      args.push(
+        '--config',
+        'approvals_reviewer=auto_review'
+      );
     }
-  );
 
-  if (result.status !== 0) {
-    throw new Error(
-      `Codex exited with code ${result.status}`
+    args.push(
+      '--output-schema',
+      schemaPath,
+
+      '--output-last-message',
+      outputPath,
+
+      '-'
+    );
+
+    const codexCommand =
+      process.env.CODEX_COMMAND ?? 'codex';
+
+    const result = spawn.sync(
+      codexCommand,
+      args,
+      {
+        input: prompt,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'inherit', 'inherit']
+      }
+    );
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      throw new Error(
+        `Codex exited with code ${result.status}`
+      );
+    }
+
+    if (!fs.existsSync(outputPath)) {
+      throw new Error(
+        'Codex did not produce structured output.'
+      );
+    }
+
+    const output =
+      fs.readFileSync(outputPath, 'utf-8');
+
+    return JSON.parse(output);
+  } finally {
+    fs.rmSync(
+      tempDir,
+      {
+        recursive: true,
+        force: true
+      }
     );
   }
-
-  if (!fs.existsSync(outputPath)) {
-    throw new Error(
-      'Codex did not produce structured output.'
-    );
-  }
-
-  const output =
-    fs.readFileSync(outputPath, 'utf-8');
-
-  return JSON.parse(output);
 }
