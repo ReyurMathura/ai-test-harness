@@ -326,6 +326,39 @@ AUTOMATION AND TEST DATA RULES:
     It means the scenario is sufficiently defined to proceed to the
     application discovery stage.
 
+59. automationReady applies equally to UI and API scenarios.
+
+    For API scenarios, set automationReady = true when the scenario is
+    deterministic and remaining implementation details can be discovered
+    from:
+
+    - API documentation
+    - OpenAPI or Swagger specifications
+    - observed live API responses
+    - observed HTTP request/response behaviour
+
+60. Do NOT set automationReady = false merely because any of the following
+    still need to be discovered:
+
+    - HTTP method
+    - endpoint path
+    - query parameters
+    - request headers
+    - response status code
+    - response content type
+    - response fields
+    - response data types
+    - response schema
+
+61. Unknown API implementation details should be resolved during API
+    discovery in the same way that selectors, controls and URLs are
+    resolved during UI discovery.
+
+62. Set automationReady = false only when the scenario itself remains
+    non-deterministic, subjective, exploratory, unsafe, unsupported by
+    the supplied requirements, or cannot be automated reliably even
+    after discovery.
+
 SOFTWARE REQUIREMENTS:
 
 ${requirements}

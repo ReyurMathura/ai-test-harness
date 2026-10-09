@@ -9,7 +9,9 @@
     "qa:create-automated-tests": "node scripts/qa-create-tests.mjs",
     "qa:execute-automated-tests": "node scripts/qa-execute-tests.mjs",
     "qa:triage-test-failures": "node scripts/qa-triage.mjs",
-    "qa:repair-test-automation": "node scripts/qa-repair.mjs"
+    "qa:repair-test-automation": "node scripts/qa-repair.mjs",
+    "qa:discover-api": "node scripts/qa-discover-api.mjs",
+    "qa:create-api-tests": "node scripts/qa-create-api-tests.mjs"
   },
   "keywords": [],
   "author": "",
