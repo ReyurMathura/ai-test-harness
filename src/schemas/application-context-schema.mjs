@@ -44,8 +44,7 @@ export const applicationContextSchema = {
             required: [
               'urlBefore',
               'urlAfter',
-              'controls',
-              'visibleEvidence'
+              'elements'
             ],
 
             properties: {
@@ -57,7 +56,7 @@ export const applicationContextSchema = {
                 type: ['string', 'null']
               },
 
-              controls: {
+              elements: {
                 type: 'array',
 
                 items: {
@@ -66,11 +65,14 @@ export const applicationContextSchema = {
 
                   required: [
                     'name',
+                    'kind',
                     'role',
                     'accessibleName',
+                    'text',
                     'placeholder',
                     'inputType',
-                    'testId'
+                    'attributes',
+                    'locatorEvidence'
                   ],
 
                   properties: {
@@ -78,33 +80,140 @@ export const applicationContextSchema = {
                       type: 'string'
                     },
 
+                    kind: {
+                      type: 'string',
+                      enum: [
+                        'input',
+                        'button',
+                        'message',
+                        'content',
+                        'navigation',
+                        'other'
+                      ]
+                    },
+
                     role: {
-                      type: ['string', 'null']
+                      type: [
+                        'string',
+                        'null'
+                      ]
                     },
 
                     accessibleName: {
-                      type: ['string', 'null']
+                      type: [
+                        'string',
+                        'null'
+                      ]
+                    },
+
+                    text: {
+                      type: [
+                        'string',
+                        'null'
+                      ]
                     },
 
                     placeholder: {
-                      type: ['string', 'null']
+                      type: [
+                        'string',
+                        'null'
+                      ]
                     },
 
                     inputType: {
-                      type: ['string', 'null']
+                      type: [
+                        'string',
+                        'null'
+                      ]
                     },
 
-                    testId: {
-                      type: ['string', 'null']
+                    attributes: {
+                      type: 'array',
+
+                      items: {
+                        type: 'object',
+                        additionalProperties: false,
+
+                        required: [
+                          'name',
+                          'value'
+                        ],
+
+                        properties: {
+                          name: {
+                            type: 'string'
+                          },
+
+                          value: {
+                            type: 'string'
+                          }
+                        }
+                      }
+                    },
+
+                    locatorEvidence: {
+                      type: 'array',
+
+                      items: {
+                        type: 'object',
+                        additionalProperties: false,
+
+                        required: [
+                          'strategy',
+                          'role',
+                          'name',
+                          'attribute',
+                          'value',
+                          'exact'
+                        ],
+
+                        properties: {
+                          strategy: {
+                            type: 'string',
+                            enum: [
+                              'role',
+                              'label',
+                              'placeholder',
+                              'text',
+                              'attribute'
+                            ]
+                          },
+
+                          role: {
+                            type: [
+                              'string',
+                              'null'
+                            ]
+                          },
+
+                          name: {
+                            type: [
+                              'string',
+                              'null'
+                            ]
+                          },
+
+                          attribute: {
+                            type: [
+                              'string',
+                              'null'
+                            ]
+                          },
+
+                          value: {
+                            type: [
+                              'string',
+                              'null'
+                            ]
+                          },
+
+                          exact: {
+                            type: 'boolean'
+                          }
+                        }
+                      }
                     }
                   }
-                }
-              },
-
-              visibleEvidence: {
-                type: 'array',
-                items: {
-                  type: 'string'
                 }
               }
             }
@@ -153,7 +262,10 @@ export const applicationContextSchema = {
                     },
 
                     contentType: {
-                      type: ['string', 'null']
+                      type: [
+                        'string',
+                        'null'
+                      ]
                     },
 
                     classification: {
@@ -178,6 +290,7 @@ export const applicationContextSchema = {
 
           missingEvidence: {
             type: 'array',
+
             items: {
               type: 'string'
             }

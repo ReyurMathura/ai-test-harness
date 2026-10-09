@@ -1,15 +1,16 @@
 {
   "mcpServers": {
-    "playwright": {
-      "type": "stdio",
-      "command": "cmd",
-      "args": [
-        "/c",
-        "npx",
-        "-y",
-        "@playwright/mcp@latest"
-      ]
-    },
+      "playwright": {
+        "type": "stdio",
+        "command": "cmd",
+        "args": [
+          "/c",
+          "npx",
+          "-y",
+          "@playwright/mcp@latest",
+          "--isolated"
+        ]
+      },
     "chrome-devtools": {
       "type": "stdio",
       "command": "cmd",
